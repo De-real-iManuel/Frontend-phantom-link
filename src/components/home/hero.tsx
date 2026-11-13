@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Mark } from "@/components/mark";
 import { Device3D } from "@/components/device-view";
 import { FogLayer, FloatingGhosts, Flashlight } from "@/components/ghost-effects";
+import { Phantom as PhantomMascot } from "@/components/phantom";
 import { SimBadge, SimulationBanner } from "@/components/simulation-banner";
 
 export const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
@@ -55,6 +56,13 @@ export function Hero() {
         <div className="rise rise-3 relative" id="device-slot">
           <Device3D />
           <SimBadge className="absolute top-2 right-2" />
+          <PhantomMascot
+            expression="default"
+            size="clamp(104px, 22vw, 168px)"
+            priority
+            idleSleepMs={45000}
+            className="absolute bottom-0 left-0 z-10 -translate-x-1 translate-y-1/4 md:-translate-x-1/3"
+          />
         </div>
       </Flashlight>
     </section>
