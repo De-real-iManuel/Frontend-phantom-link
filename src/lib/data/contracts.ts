@@ -27,7 +27,9 @@ export type RawFrame = {
   slaveAddress: number | null;
   functionCode: number | null;
   registerAddress: number | null;
+  /** CRC bytes carried inside the frame, wire order (low byte first). */
   crcExpected: string | null;
+  /** CRC computed locally over the frame body, wire order. */
   crcComputed: string | null;
   status: FrameStatus;
   simulated: boolean;
@@ -63,12 +65,25 @@ export type McpToolInfo = {
   planned: boolean;
 };
 
+export type AgentExecutionStatus = "simulated" | "pending" | "success" | "error";
+
 export type AgentActivity = {
   id: string;
   timestamp: number;
   tool: string;
   summary: string;
+  status: AgentExecutionStatus;
+  deviceId: string | null;
+  /** Name of the telemetry point the request referred to, if any. */
+  telemetryRef: string | null;
   simulated: boolean;
+};
+
+export type DeviceSummary = DeviceIdentity & {
+  /** Communication interface, or null when not known. */
+  interface: string | null;
+  connection: ConnectionState;
+  telemetryPoints: number;
 };
 
 export type DataSourceState<T> =
