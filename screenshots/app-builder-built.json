@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Phantomlink — Silent machines. Speaking models.",
+      "hasCanvas": false,
+      "bodyTextLen": 2466,
+      "bodyTextHash": "4ebe72c20fb381014fded599b1ead0ff64a8e5497e16b5a8e602cb4c0aee3f89",
+      "bodyTextPrefix": "phantomlink Protocol Agents Deploy Walk my plant REGISTERS IN. R",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Phantomlink — Silent machines. Speaking models.",
+      "hasCanvas": false,
+      "bodyTextLen": 2443,
+      "bodyTextHash": "29b2d70bf778200cd459db8b9dd7c35dcf3dbc55693890d604389ecfbaba536c",
+      "bodyTextPrefix": "phantomlink Walk my plant REGISTERS IN. REASONS OUT. Silent mach",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

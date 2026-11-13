@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: Outfit;
+        src: url("./fonts/outfit-latin-500-normal.woff") format("woff");
+        font-weight: 500;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "IBM Plex Mono";
+        src: url("./fonts/ibm-plex-mono-latin-400-normal.woff") format("woff");
+        font-weight: 400;
+        font-style: normal;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        background: #07090b;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .plate {
+        position: absolute;
+        inset: 36px;
+        pointer-events: none;
+      }
+      .lockup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateY(-4px);
+      }
+      .mark {
+        width: 232px;
+        height: auto;
+        display: block;
+      }
+      .word {
+        margin: 34px 0 0;
+        padding-left: 0.16em;
+        font-family: Outfit, sans-serif;
+        font-weight: 500;
+        font-size: 84px;
+        line-height: 1;
+        letter-spacing: 0.16em;
+        color: #e6e2d8;
+      }
+      .tag {
+        margin: 20px 0 0;
+        padding-left: 0.22em;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: 0.22em;
+        color: #8e968c;
+      }
+    </style>
+  </head>
+  <body>
+    <svg class="plate" viewBox="0 0 1128 558" fill="none" aria-hidden="true">
+      <path d="M0 22V0H22" stroke="#8E968C" stroke-opacity="0.35" stroke-width="1.25" />
+      <path d="M1106 0H1128V22" stroke="#8E968C" stroke-opacity="0.35" stroke-width="1.25" />
+      <path d="M0 536V558H22" stroke="#8E968C" stroke-opacity="0.35" stroke-width="1.25" />
+      <path d="M1106 558H1128V536" stroke="#8E968C" stroke-opacity="0.35" stroke-width="1.25" />
+    </svg>
+    <div class="lockup">
+      <svg class="mark" viewBox="4 11.2 37 25.6" fill="none" aria-hidden="true">
+        <circle
+          cx="18"
+          cy="24"
+          r="11"
+          stroke="#8E968C"
+          stroke-width="1.75"
+          stroke-dasharray="56.8 12.3"
+          stroke-dashoffset="6.15"
+        />
+        <path d="M5 24H34" stroke="#D6FF3E" stroke-width="2" />
+        <rect x="34" y="21" width="6" height="6" fill="#D6FF3E" />
+      </svg>
+      <p class="word">phantomlink</p>
+      <p class="tag">Registers in. Reasons out.</p>
+    </div>
+  </body>
+</html>
