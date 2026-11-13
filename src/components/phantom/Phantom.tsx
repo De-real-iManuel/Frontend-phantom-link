@@ -72,12 +72,10 @@ export const Phantom = memo(function Phantom({
   useEffect(() => {
     if (target === shown) return;
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | undefined;
     const commit = () => {
       if (cancelled) return;
       setLeaving(shown);
       setShown(target);
-      timer = setTimeout(() => !cancelled && setLeaving(null), FADE_MS + 60);
     };
     const img = new Image();
     img.onload = commit;
@@ -88,9 +86,16 @@ export const Phantom = memo(function Phantom({
       cancelled = true;
       img.onload = null;
       img.onerror = null;
-      if (timer) clearTimeout(timer);
     };
   }, [target, shown]);
+
+  // Drop the outgoing layer once the fade finishes. Kept separate so the
+  // preload effect's cleanup (which runs when `shown` changes) cannot cancel it.
+  useEffect(() => {
+    if (!leaving) return;
+    const timer = setTimeout(() => setLeaving(null), FADE_MS + 60);
+    return () => clearTimeout(timer);
+  }, [leaving]);
 
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
