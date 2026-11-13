@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Wordmark } from "@/components/mark";
 import { SimulationBanner } from "@/components/simulation-banner";
+import { Phantom } from "@/components/phantom";
+import type { PhantomExpression } from "@/components/phantom";
 import { FogLayer } from "@/components/ghost-effects";
 import { BackendDataSource, DataSourceProvider, SimulationDataSource } from "@/lib/data/adapter";
 import { focus } from "@/components/dashboard/common";
@@ -41,6 +43,17 @@ function DashboardBody({ useBackend, onToggleSource }: { useBackend: boolean; on
     setSection(id);
     window.history.replaceState(null, "", `#${id}`);
   };
+
+  // One small mascot, driven only by real dashboard state. Status text stays the primary message.
+  const expression: PhantomExpression = !data.simulated
+    ? "warning"
+    : data.telemetry.status === "loading"
+      ? "working"
+      : data.telemetry.status === "empty"
+        ? "sleeping"
+        : data.paused
+          ? "sleeping"
+          : "default";
 
   return (
     <div className="relative min-h-screen bg-bg text-fg md:grid md:grid-cols-[13rem_minmax(0,1fr)]">
@@ -111,13 +124,18 @@ function DashboardBody({ useBackend, onToggleSource }: { useBackend: boolean; on
         </header>
 
         <main className="relative grid grid-cols-[minmax(0,1fr)] gap-4 p-4 md:p-6">
-          {data.simulated ? (
-            <SimulationBanner />
-          ) : (
-            <p role="status" className="border border-line bg-surface px-3 py-2 font-mono text-xs text-muted">
-              No backend is connected. Every section reports its service as unavailable.
-            </p>
-          )}
+          <div className="flex min-w-0 items-center gap-3">
+            <Phantom expression={expression} size={64} className="shrink-0" idleSleepMs={90000} />
+            <div className="min-w-0 flex-1">
+              {data.simulated ? (
+                <SimulationBanner />
+              ) : (
+                <p role="status" className="border border-line bg-surface px-3 py-2 font-mono text-xs text-muted">
+                  No backend is connected. Every section reports its service as unavailable.
+                </p>
+              )}
+            </div>
+          </div>
           <h1 className="sr-only">Phantomlink dashboard</h1>
           {section === "overview" ? <OverviewSection data={data} /> : null}
           {section === "devices" ? <DeviceExplorer data={data} /> : null}

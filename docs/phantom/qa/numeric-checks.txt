@@ -1,0 +1,9 @@
+default      mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=1 edge_lum_on_light=217 bbox=(171, 93, 463, 619) core=(48.9,65.22) OK
+curious      mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=3 edge_lum_on_light=217 bbox=(175, 83, 464, 619) core=(58.68,62.27) OK
+working      mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=5 edge_lum_on_light=220 bbox=(156, 78, 472, 619) core=(47.88,65.9) OK
+excited      mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=4 edge_lum_on_light=220 bbox=(131, 71, 509, 619) core=(51.0,56.57) OK
+sleeping     mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=3 edge_lum_on_light=216 bbox=(173, 114, 466, 619) core=(56.03,66.05) OK
+warning      mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=3 edge_lum_on_light=219 bbox=(172, 93, 464, 619) core=(52.46,68.05) OK
+resurrection mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=17 edge_lum_on_light=212 bbox=(148, 24, 488, 619) core=(60.21,46.42) OK
+celebrating  mode=RGBA size=(640, 640) corner_a=0 border_a=0 components=17 edge_lum_on_light=220 bbox=(153, 95, 489, 619) core=(56.63,59.59) OK
+ALL OK

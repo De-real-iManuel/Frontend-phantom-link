@@ -1,0 +1,51 @@
+{
+  "phantom-icon": {
+    "mascot_px": [
+      233,
+      420
+    ],
+    "occupancy": 0.82
+  },
+  "favicon-16": {
+    "occupancy": 0.82,
+    "art": "head+core"
+  },
+  "favicon-32": {
+    "occupancy": 0.82,
+    "art": "head+core"
+  },
+  "favicon-48": {
+    "occupancy": 0.82,
+    "art": "head+core"
+  },
+  "favicon-64": {
+    "occupancy": 0.82,
+    "art": "head+core"
+  },
+  "favicon-180": {
+    "occupancy": 0.819,
+    "opaque": true
+  },
+  "favicon-192": {
+    "occupancy": 0.82,
+    "opaque": false
+  },
+  "favicon-512": {
+    "occupancy": 0.82,
+    "opaque": false
+  },
+  "maskable-192": {
+    "occupancy": 0.62,
+    "opaque": true
+  },
+  "maskable-512": {
+    "occupancy": 0.62,
+    "opaque": true
+  },
+  "phantom-icon-mono": {
+    "occupancy": 0.82
+  },
+  "phantom-icon-mono-dark": {
+    "occupancy": 0.82
+  }
+}
