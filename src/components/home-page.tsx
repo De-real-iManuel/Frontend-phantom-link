@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Wordmark, Mark } from "@/components/mark";
+import { Device3D } from "@/components/device-view";
 import { FogLayer, FloatingGhosts, Flashlight } from "@/components/ghost-effects";
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
@@ -91,54 +92,6 @@ const facts = [
 const hauntText =
   "40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B 0x00 0x01  DB1.DBW4=0x2A  slave01 fn03 crc=A4F1  40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B 0x00 0x01  DB1.DBW4=0x2A  slave01 fn03 crc=A4F1  40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B 0x00 0x01  DB1.DBW4=0x2A  slave01 fn03 crc=A4F1  40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B";
 
-function DeviceFallback() {
-  return (
-    <svg
-      viewBox="0 0 320 280"
-      className="mx-auto w-full max-w-sm"
-      role="img"
-      aria-label="Phantomlink edge device with three bus ports and a glowing status light"
-    >
-      <rect
-        x="40"
-        y="70"
-        width="240"
-        height="140"
-        className="fill-surface stroke-line"
-        strokeWidth="2"
-      />
-      <rect
-        x="56"
-        y="86"
-        width="208"
-        height="64"
-        className="fill-bg stroke-line"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M64 130h28l8-24 12 40 10-28 8 12h30"
-        className="stroke-signal"
-        strokeWidth="2"
-        fill="none"
-      />
-      {[0, 1, 2].map((i) => (
-        <rect
-          key={i}
-          x={64 + i * 36}
-          y="170"
-          width="24"
-          height="22"
-          className="fill-bg stroke-muted"
-          strokeWidth="1.5"
-        />
-      ))}
-      <circle cx="248" cy="181" r="6" className="fill-signal flicker" />
-      <path d="M160 70V30M120 70V46M200 70V46" className="stroke-muted" strokeWidth="2" />
-      <circle cx="160" cy="26" r="5" className="fill-pumpkin" />
-    </svg>
-  );
-}
-
 function signalState(state: Sample["state"]) {
   return state === "steady" ? "text-fg" : "text-signal";
 }
@@ -211,7 +164,7 @@ export function HomePage() {
               </div>
             </div>
             <div className="rise rise-3 relative" id="device-slot">
-              <DeviceFallback />
+              <Device3D />
             </div>
           </Flashlight>
         </section>
