@@ -1,0 +1,200 @@
+/* Phantom mascot. Transform and opacity only. Poses are flattened images:
+   motion is whole-body, never deformation. */
+.phantom {
+  --phantom-size: 240px;
+  --phantom-fade: 420ms;
+  --px: 0;
+  --py: 0;
+  --rx: 0deg;
+  --ry: 0deg;
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: var(--phantom-size);
+  height: var(--phantom-size);
+  max-width: 100%;
+  vertical-align: middle;
+  isolation: isolate;
+  perspective: 700px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Vertical scrolling and navigation gestures always stay with the browser. */
+  touch-action: pan-y;
+  outline: none;
+}
+.phantom[data-interactive="true"] { cursor: pointer; }
+.phantom:focus-visible { outline: 2px solid var(--color-signal, #18e0ad); outline-offset: 4px; border-radius: 12px; }
+
+.phantom__glow,
+.phantom__stage,
+.phantom__front,
+.phantom__body,
+.phantom__layer { position: absolute; inset: 0; }
+.phantom__stage,
+.phantom__body,
+.phantom__layer,
+.phantom__front { pointer-events: none; }
+
+/* Back layer: ambient glow, moves opposite to the pointer. */
+.phantom__glow {
+  background: radial-gradient(closest-side at 50% 62%, rgba(24, 224, 173, 0.16), transparent 72%);
+  opacity: 0.8;
+  transform: translate3d(calc(var(--px) * -8px), calc(var(--py) * -6px), 0);
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.phantom[data-expression="warning"] .phantom__glow { background: radial-gradient(closest-side at 50% 62%, rgba(255, 106, 68, 0.13), transparent 72%); }
+.phantom[data-expression="sleeping"] .phantom__glow { opacity: 0.4; }
+
+/* Character layer: perspective tilt toward the pointer. */
+.phantom__stage {
+  transform: translate3d(calc(var(--px) * 3px), calc(var(--py) * 2px), 0) rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition: transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Front layer: rings and particles, moves with the pointer a bit more. */
+.phantom__front {
+  transform: translate3d(calc(var(--px) * 10px), calc(var(--py) * 7px), 0);
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Idle motion: three loops with non-integer-multiple durations. */
+.phantom__body { transform-origin: 50% 100%; }
+.phantom[data-animated="true"] .phantom__body {
+  animation:
+    phantom-float 5.3s ease-in-out infinite,
+    phantom-sway 7.9s ease-in-out infinite,
+    phantom-breathe 3.7s ease-in-out infinite;
+}
+@keyframes phantom-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3.2%; } }
+@keyframes phantom-sway { 0%, 100% { rotate: -0.9deg; } 50% { rotate: 1.1deg; } }
+@keyframes phantom-breathe { 0%, 100% { scale: 1; } 50% { scale: 1.014; } }
+
+.phantom[data-animated="true"][data-expression="curious"] .phantom__body { animation-name: phantom-float, phantom-curious, phantom-breathe; }
+@keyframes phantom-curious { 0%, 100% { rotate: -2deg; } 50% { rotate: 2.4deg; } }
+
+.phantom[data-animated="true"][data-expression="working"] .phantom__body {
+  animation-duration: 3.9s, 11s, 2.3s;
+}
+.phantom[data-animated="true"][data-expression="sleeping"] .phantom__body {
+  animation-duration: 8.3s, 13s, 6.1s;
+}
+.phantom[data-animated="true"][data-expression="excited"] .phantom__body,
+.phantom[data-animated="true"][data-expression="celebrating"] .phantom__body {
+  animation-name: phantom-bounce, phantom-sway, phantom-breathe;
+  animation-duration: 1.9s, 4.7s, 2.9s;
+}
+@keyframes phantom-bounce {
+  0%, 100% { translate: 0 0; }
+  35% { translate: 0 -5%; }
+  55% { translate: 0 0; }
+  70% { translate: 0 -1.6%; }
+}
+.phantom[data-animated="true"][data-expression="warning"] .phantom__body {
+  animation-name: phantom-float, phantom-unease, phantom-breathe;
+  animation-duration: 4.3s, 3.1s, 3.3s;
+}
+@keyframes phantom-unease { 0%, 100% { rotate: -0.6deg; } 50% { rotate: 0.6deg; } }
+.phantom[data-animated="true"][data-expression="resurrection"] .phantom__body {
+  animation-name: phantom-rise, phantom-sway, phantom-breathe;
+  animation-duration: 6.2s, 8.3s, 3.7s;
+}
+@keyframes phantom-rise {
+  0% { translate: 0 3%; }
+  40%, 100% { translate: 0 0; }
+}
+
+/* Pose layers and crossfade. */
+.phantom__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; -webkit-user-drag: none; }
+.phantom__layer[data-state="current"] { animation: phantom-in var(--phantom-fade) ease-out both; }
+.phantom__layer[data-state="leaving"] { animation: phantom-out var(--phantom-fade) ease-in both; }
+@keyframes phantom-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes phantom-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* Signal Core: soft radial glow at the measured core point. */
+.phantom__core {
+  position: absolute;
+  left: var(--core-x);
+  top: var(--core-y);
+  width: 26%;
+  aspect-ratio: 1;
+  margin: -13% 0 0 -13%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--core-rgb), 0.75), rgba(var(--core-rgb), 0.18) 55%, transparent 100%);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+.phantom[data-animated="true"] .phantom__core { animation: phantom-core var(--pulse) ease-in-out infinite; }
+.phantom[data-animated="false"] .phantom__core { opacity: calc(var(--core-glow) * 0.5); }
+@keyframes phantom-core {
+  0%, 100% { opacity: calc(var(--core-glow) * 0.35); scale: 0.9; }
+  50% { opacity: var(--core-glow); scale: 1.08; }
+}
+
+/* Ground shadow follows the float. */
+.phantom__shadow {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  bottom: 0;
+  height: 4%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.35), transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+.phantom[data-animated="true"] .phantom__shadow { animation: phantom-shadow 5.3s ease-in-out infinite; }
+@keyframes phantom-shadow { 0%, 100% { scale: 1; opacity: 0.9; } 50% { scale: 0.88; opacity: 0.6; } }
+
+/* Resurrection signal rings. */
+.phantom__ring {
+  position: absolute;
+  left: 60.2%;
+  top: 46.4%;
+  width: 40%;
+  aspect-ratio: 1;
+  margin: -20% 0 0 -20%;
+  border-radius: 50%;
+  border: 1.5px solid rgba(60, 245, 150, 0.5);
+  opacity: 0;
+  animation: phantom-ring 3.6s ease-out infinite;
+  animation-delay: calc(var(--i) * 1.2s);
+}
+@keyframes phantom-ring {
+  0% { opacity: 0.55; scale: 0.3; }
+  100% { opacity: 0; scale: 1.7; }
+}
+
+/* Celebration particles (6). */
+.phantom__particle {
+  position: absolute;
+  left: calc(22% + var(--i) * 11%);
+  bottom: 38%;
+  width: 3%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(60, 245, 150, 0.85);
+  box-shadow: 0 0 6px rgba(60, 245, 150, 0.6);
+  opacity: 0;
+  animation: phantom-particle 3.1s ease-out infinite;
+  animation-delay: calc(var(--i) * 0.47s);
+}
+@keyframes phantom-particle {
+  0% { opacity: 0; translate: 0 0; }
+  15% { opacity: 0.8; }
+  100% { opacity: 0; translate: calc((var(--i) - 2.5) * 6px) -90px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phantom .phantom__body,
+  .phantom .phantom__shadow,
+  .phantom .phantom__ring,
+  .phantom .phantom__particle { animation: none !important; }
+  .phantom .phantom__ring,
+  .phantom .phantom__particle { display: none; }
+  .phantom .phantom__core { animation: none !important; opacity: calc(var(--core-glow) * 0.5); }
+  .phantom .phantom__stage,
+  .phantom .phantom__front,
+  .phantom .phantom__glow { transform: none !important; transition: none; }
+}
