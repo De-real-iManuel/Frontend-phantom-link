@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { crc16Modbus, crcWireBytes, crcWireHex } from "./crc16.ts";
 import { buildException, buildReadRequest, parseFrame } from "./frame.ts";
-import { SimulationDataSource } from "../data/adapter.ts";
+import { SimulationDataSource, type PhantomLinkDataSource } from "../data/adapter.ts";
 
 test("CRC-16/Modbus matches the published check value for ASCII 123456789", () => {
   const bytes = [...Buffer.from("123456789")];
@@ -68,7 +68,7 @@ test("simulation frames are labelled simulated and mix valid and rejected", () =
 
 test("backend stub reports unavailable for all new reads", async () => {
   const { BackendDataSource } = await import("../data/adapter.ts");
-  const b = new BackendDataSource();
+  const b: PhantomLinkDataSource = new BackendDataSource();
   const t = source0();
   assert.equal(b.getFrames(t).status, "unavailable");
   assert.equal(b.getProvenance(t).status, "unavailable");
