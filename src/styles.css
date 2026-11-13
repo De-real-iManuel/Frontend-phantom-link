@@ -6,12 +6,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #07090b;
-  --color-surface: #101412;
-  --color-fg: #e6e2d8;
-  --color-muted: #8e968c;
-  --color-signal: #d6ff3e;
-  --color-line: #232824;
+  --color-bg: #0a0813;
+  --color-surface: #131023;
+  --color-fg: #ece9f5;
+  --color-muted: #a29cba;
+  --color-signal: #7dffa1;
+  --color-pumpkin: #ff8a2b;
+  --color-line: #2a2442;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --radius-sm: 2px;
@@ -111,7 +112,123 @@
   animation: link-draw-y 700ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
+@keyframes ghost-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  41% {
+    opacity: 1;
+  }
+  43% {
+    opacity: 0.35;
+  }
+  45% {
+    opacity: 1;
+  }
+  47% {
+    opacity: 0.6;
+  }
+  49% {
+    opacity: 1;
+  }
+}
+
+@keyframes fog-drift {
+  from {
+    transform: translate3d(-6%, 0, 0);
+  }
+  to {
+    transform: translate3d(6%, -3%, 0);
+  }
+}
+
+@keyframes glitch {
+  0%,
+  100% {
+    transform: none;
+    text-shadow: none;
+  }
+  20% {
+    transform: translate(-2px, 1px);
+    text-shadow:
+      2px 0 var(--color-pumpkin),
+      -2px 0 var(--color-signal);
+  }
+  40% {
+    transform: translate(2px, -1px);
+    text-shadow:
+      -2px 0 var(--color-pumpkin),
+      2px 0 var(--color-signal);
+  }
+  60% {
+    transform: translate(-1px, 0);
+  }
+}
+
+.ghost-float {
+  animation: ghost-float 6s ease-in-out infinite;
+}
+
+.flicker {
+  animation: flicker 5s linear infinite;
+}
+
+.fog {
+  position: absolute;
+  inset: -20% -10%;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 30% at 20% 70%, rgb(125 255 161 / 0.1), transparent 70%),
+    radial-gradient(35% 28% at 75% 40%, rgb(160 130 255 / 0.12), transparent 70%),
+    radial-gradient(30% 25% at 50% 95%, rgb(255 138 43 / 0.07), transparent 70%);
+  filter: blur(24px);
+  animation: fog-drift 18s ease-in-out infinite alternate;
+}
+
+.fog-2 {
+  animation-duration: 26s;
+  animation-direction: alternate-reverse;
+  opacity: 0.7;
+}
+
+.glitch:hover,
+.glitch:focus-visible {
+  animation: glitch 400ms steps(2, end) 1;
+}
+
+.flashlight-layer {
+  mask-image: radial-gradient(
+    180px circle at var(--mx, -999px) var(--my, -999px),
+    #000 0%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    180px circle at var(--mx, -999px) var(--my, -999px),
+    #000 0%,
+    transparent 100%
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .ghost-float,
+  .flicker,
+  .fog,
+  .glitch:hover,
+  .glitch:focus-visible {
+    animation: none;
+  }
+
   html {
     scroll-behavior: auto;
   }

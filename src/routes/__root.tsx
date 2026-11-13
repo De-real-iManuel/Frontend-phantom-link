@@ -10,13 +10,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Phantomlink — Silent machines. Speaking models." },
+      { title: "Phantomlink: Silent machines. Speaking models." },
       {
         name: "description",
         content:
-          "Phantomlink translates registers, pulses, and forgotten protocols into a stream any agent can reason over — without ripping out the plant.",
+          "Phantomlink reads legacy industrial registers (Modbus, BACnet, OPC, 4-20 mA) and turns them into named events for AI agents. No PLC rewrite.",
       },
-      { name: "theme-color", content: "#07090b" },
+      { name: "theme-color", content: "#0a0813" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
