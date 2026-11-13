@@ -14,10 +14,11 @@ import { FogLayer } from "@/components/ghost-effects";
 import { Device3D, type DevicePart } from "@/components/device-view";
 import {
   BASELINE,
-  SITES,
   devices,
   formatClock,
+  eventsPerMin,
   initialTelemetry,
+  openDrifts,
   partDetails,
   tickTelemetry,
   type DeviceStatus,
@@ -82,7 +83,6 @@ export function DashboardPage() {
   const [data, setData] = useState<Telemetry>(initialTelemetry);
   const [mounted, setMounted] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [site, setSite] = useState<string>(SITES[0]);
   const [band, setBand] = useState(0.5);
   const [selectedDevice, setSelectedDevice] = useState(devices[0].id);
   const [part, setPart] = useState<DevicePart | null>(null);
@@ -106,8 +106,8 @@ export function DashboardPage() {
 
   const kpis = [
     ["Points online", `${online}/${total}`],
-    ["Events per min", String(data.eventsPerMin)],
-    ["Open drifts", String(data.openDrifts)],
+    ["Events per min (window)", String(eventsPerMin(data.events))],
+    ["Drifts in window", String(openDrifts(data.events))],
     ["Agent calls", agentCalls.toLocaleString("en-US")],
   ];
 
@@ -135,20 +135,9 @@ export function DashboardPage() {
       <div className="relative min-w-0">
         <FogLayer className="opacity-60" />
         <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur-md">
-          <label className="flex items-center gap-2 text-sm text-muted">
-            Site
-            <select
-              value={site}
-              onChange={(event) => setSite(event.target.value)}
-              className={`h-11 border border-line bg-bg px-3 text-fg ${focus}`}
-            >
-              {SITES.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <p className="inline-flex h-11 items-center gap-2 border border-pumpkin px-3 font-mono text-xs text-pumpkin">
+            Simulated data
+          </p>
           <button
             type="button"
             aria-pressed={!paused}
@@ -164,7 +153,7 @@ export function DashboardPage() {
         </header>
 
         <main className="relative grid grid-cols-[minmax(0,1fr)] gap-4 p-4 md:p-6">
-          <h1 className="sr-only">Dashboard for {site}</h1>
+          <h1 className="sr-only">Phantomlink dashboard, simulated data</h1>
 
           <section
             id="overview"
@@ -181,7 +170,7 @@ export function DashboardPage() {
 
           <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <Panel
-              title="boiler-3 discharge pressure (bar)"
+              title="Reference: boiler-3 discharge pressure (bar)"
               right={<span className="font-mono text-xs text-muted">baseline {BASELINE}</span>}
             >
               <div
@@ -237,8 +226,10 @@ export function DashboardPage() {
               <div className="border-t border-line p-4" aria-live="polite">
                 {part ? (
                   <>
-                    <p className="font-mono text-sm text-signal">{partDetails[part].title}</p>
-                    <p className="mt-1 text-sm text-muted">{partDetails[part].detail}</p>
+                    <p className="font-mono text-sm text-signal">
+                      {partDetails(device, part).title}
+                    </p>
+                    <p className="mt-1 text-sm text-muted">{partDetails(device, part).detail}</p>
                   </>
                 ) : (
                   <p className="text-sm text-muted">
@@ -253,7 +244,10 @@ export function DashboardPage() {
             <Panel id="events" title="Event stream">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[30rem] border-collapse font-mono text-xs">
-                  <caption className="sr-only">Latest named events from the plant</caption>
+                  <caption className="sr-only">
+                    Latest named events from the plant. Rows for the selected device are
+                    highlighted.
+                  </caption>
                   <thead>
                     <tr className="text-left text-muted">
                       <th scope="col" className="px-4 py-2 font-normal">
@@ -282,7 +276,10 @@ export function DashboardPage() {
                       </tr>
                     ) : (
                       data.events.map((event) => (
-                        <tr key={event.id} className="rise border-t border-line">
+                        <tr
+                          key={event.id}
+                          className={`rise border-t border-line ${event.asset === device.asset ? "bg-bg" : ""}`}
+                        >
                           <td className="px-4 py-2 text-muted tabular-nums">
                             {formatClock(event.ts)}
                           </td>

@@ -28,12 +28,9 @@ export type Telemetry = {
   events: TelemetryEvent[];
   series: SeriesPoint[];
   tools: AgentTool[];
-  eventsPerMin: number;
-  openDrifts: number;
 };
 
 export const BASELINE = 6.4;
-export const SITES = ["Boiler house", "Cold room", "Air handler row"] as const;
 
 export const devices: Device[] = [
   {
@@ -124,8 +121,6 @@ export function initialTelemetry(): Telemetry {
     seq: 12,
     events,
     series,
-    eventsPerMin: 84,
-    openDrifts: 3,
     tools: [
       { name: "read_asset", blurb: "Read a named point with units and state", calls: 1284 },
       { name: "explain_drift", blurb: "Correlate a drift with nearby assets", calls: 316 },
@@ -148,17 +143,11 @@ export function tickTelemetry(prev: Telemetry, rand: () => number = Math.random)
   const tools = prev.tools.map((tool) =>
     rand() < 0.35 ? { ...tool, calls: tool.calls + 1 } : tool,
   );
-  const drifting = event.state === "steady" ? 0 : 1;
   return {
     seq,
     events: [event, ...prev.events].slice(0, 12),
     series: [...prev.series.slice(1), { i: last.i + 1, v: next }],
     tools,
-    eventsPerMin: Math.max(60, Math.min(120, prev.eventsPerMin + Math.round((rand() - 0.5) * 6))),
-    openDrifts: Math.max(
-      0,
-      Math.min(9, prev.openDrifts + (drifting && rand() < 0.2 ? 1 : rand() < 0.1 ? -1 : 0)),
-    ),
   };
 }
 
@@ -166,12 +155,49 @@ export function formatClock(ts: number) {
   return new Date(ts).toISOString().slice(11, 19);
 }
 
-export const partDetails: Record<string, { title: string; detail: string }> = {
-  "RS-485": { title: "RS-485 bus", detail: "Modbus RTU, 9600 8E1, slave 01. 62 points mapped." },
-  "4-20mA": {
-    title: "4-20 mA loops",
-    detail: "Four analog inputs, 12-bit, span-scaled per point.",
-  },
-  Ethernet: { title: "Ethernet uplink", detail: "Outbound events only. No inbound ports open." },
-  Antenna: { title: "Antenna", detail: "Optional LTE fallback when the plant network is down." },
-};
+/** Drift count over the visible event window. */
+export function openDrifts(events: TelemetryEvent[]) {
+  return events.filter((event) => event.state !== "steady").length;
+}
+
+/** Event rate implied by the spacing of the visible event window. */
+export function eventsPerMin(events: TelemetryEvent[]) {
+  if (events.length < 2) return 0;
+  const span = events[0].ts - events[events.length - 1].ts;
+  if (span <= 0) return 0;
+  return Math.round(((events.length - 1) * 60000) / span);
+}
+
+export type PartName = "RS-485" | "4-20mA" | "Ethernet" | "Antenna";
+
+/** Part copy for the selected device. The 3D model is a generic gateway. */
+export function partDetails(device: Device, part: PartName): { title: string; detail: string } {
+  switch (part) {
+    case "RS-485":
+      return {
+        title: "RS-485 bus",
+        detail:
+          device.bus === "Modbus RTU"
+            ? `Modbus RTU, 9600 8E1, slave 01. ${device.points} points mapped.`
+            : `Not in use on ${device.name}. It reads ${device.bus} instead.`,
+      };
+    case "4-20mA":
+      return {
+        title: "4-20 mA loops",
+        detail:
+          device.bus === "4-20 mA"
+            ? `Four analog inputs, 12-bit, span-scaled. ${device.points} points mapped.`
+            : `Not in use on ${device.name}. It reads ${device.bus} instead.`,
+      };
+    case "Ethernet":
+      return {
+        title: "Ethernet uplink",
+        detail:
+          device.status === "offline"
+            ? `${device.name} is offline. No events are leaving the plant.`
+            : "Outbound events only. No inbound ports open.",
+      };
+    case "Antenna":
+      return { title: "Antenna", detail: "Optional LTE fallback when the plant network is down." };
+  }
+}

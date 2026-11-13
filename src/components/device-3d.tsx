@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, OrbitControls, RoundedBox } from "@react-three/drei";
 import type { Group, Mesh, MeshStandardMaterial } from "three";
@@ -30,6 +30,12 @@ function Part({
   children,
 }: PartProps) {
   const active = hovered === name || selected === name;
+  useEffect(
+    () => () => {
+      document.body.style.cursor = "";
+    },
+    [],
+  );
   return (
     <group
       position={position}
