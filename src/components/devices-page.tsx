@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Wordmark } from "@/components/mark";
+import { SiteHeader } from "@/components/site-header";
 import { Equipment3D } from "@/components/device-view";
 import { SCENES } from "@/components/three/equipment-parts";
 import {
@@ -166,21 +165,7 @@ export function DevicesPage() {
 
   return (
     <div className="min-h-screen bg-bg text-fg">
-      <header className="border-b border-line">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
-          <Link to="/" className={focus} aria-label="Phantomlink home">
-            <Wordmark />
-          </Link>
-          <nav className="flex gap-2" aria-label="Site">
-            <Link
-              to="/dashboard"
-              className={`inline-flex h-11 items-center px-3 text-sm text-signal hover:text-fg ${focus}`}
-            >
-              Dashboard
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6">
         <div>

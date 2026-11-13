@@ -140,8 +140,8 @@ export const SCENES: Record<SceneKind, SceneSpec> = {
       },
       {
         id: "analog",
-        label: "4-20 mA input",
-        description: "Analog current-loop input in the demonstration concept.",
+        label: "Analog terminals",
+        description: "Illustrative terminals on the concept gateway. Not a supported input.",
         position: [-0.2, -0.45, 0.52],
         size: [0.5, 0.4, 0.06],
         color: "#b9b4cc",

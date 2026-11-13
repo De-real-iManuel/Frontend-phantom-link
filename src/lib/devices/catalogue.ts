@@ -190,7 +190,7 @@ export const catalogue: CatalogueDevice[] = [
     model: "Edge gateway (concept)",
     variant: null,
     category: "Edge gateway",
-    protocol: "RS-485, 4-20 mA and Ethernet as shown in the demonstration",
+    protocol: "Modbus RTU over RS-485, as shown in the demonstration",
     physicalInterface: "Demonstration only. No hardware exists.",
     productUrl: "https://github.com/De-real-iManuel/Frontend-phantom-link",
     productPageRead: true,

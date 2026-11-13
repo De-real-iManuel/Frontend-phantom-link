@@ -83,6 +83,12 @@ function DashboardBody({ useBackend, onToggleSource }: { useBackend: boolean; on
               {useBackend ? "Use simulation" : "Try backend source"}
             </button>
             <Link
+              to="/demo"
+              className={`inline-flex h-11 items-center border border-line px-3 font-mono text-xs transition-colors duration-200 hover:border-signal ${focus}`}
+            >
+              Demo
+            </Link>
+            <Link
               to="/devices"
               className={`inline-flex h-11 items-center border border-line px-3 font-mono text-xs transition-colors duration-200 hover:border-signal ${focus}`}
             >
