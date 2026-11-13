@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { Wordmark, Mark } from "@/components/mark";
 import { Device3D } from "@/components/device-view";
 import { FogLayer, FloatingGhosts, Flashlight } from "@/components/ghost-effects";
@@ -114,9 +115,9 @@ export function HomePage() {
             <a href="#deploy" className={`text-sm text-muted hover:text-fg ${focus}`}>
               Deploy
             </a>
-            <a href="/dashboard" className={`text-sm text-signal hover:text-fg ${focus}`}>
+            <Link to="/dashboard" className={`text-sm text-signal hover:text-fg ${focus}`}>
               Dashboard
-            </a>
+            </Link>
           </nav>
           <a
             href="#walk"
@@ -155,12 +156,12 @@ export function HomePage() {
                 >
                   Summon a device
                 </a>
-                <a
-                  href="/dashboard"
+                <Link
+                  to="/dashboard"
                   className={`inline-flex h-11 items-center justify-center border border-line px-5 text-sm text-fg transition-colors duration-200 hover:border-signal active:scale-[0.96] ${focus}`}
                 >
                   Open the dashboard
-                </a>
+                </Link>
               </div>
             </div>
             <div className="rise rise-3 relative" id="device-slot">
