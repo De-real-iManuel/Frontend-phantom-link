@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Wordmark, Mark } from "@/components/mark";
+import { FogLayer, FloatingGhosts, Flashlight } from "@/components/ghost-effects";
 
-const focus =
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
+const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
 
 const samples = [
   {
@@ -88,6 +88,57 @@ const facts = [
   ["To a reason", "40 min"],
 ];
 
+const hauntText =
+  "40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B 0x00 0x01  DB1.DBW4=0x2A  slave01 fn03 crc=A4F1  40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B 0x00 0x01  DB1.DBW4=0x2A  slave01 fn03 crc=A4F1  40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B 0x00 0x01  DB1.DBW4=0x2A  slave01 fn03 crc=A4F1  40012:19 40  40013:00 00  AV:22=71.4  AI-14=12.80mA  0x03 0x0B";
+
+function DeviceFallback() {
+  return (
+    <svg
+      viewBox="0 0 320 280"
+      className="mx-auto w-full max-w-sm"
+      role="img"
+      aria-label="Phantomlink edge device with three bus ports and a glowing status light"
+    >
+      <rect
+        x="40"
+        y="70"
+        width="240"
+        height="140"
+        className="fill-surface stroke-line"
+        strokeWidth="2"
+      />
+      <rect
+        x="56"
+        y="86"
+        width="208"
+        height="64"
+        className="fill-bg stroke-line"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M64 130h28l8-24 12 40 10-28 8 12h30"
+        className="stroke-signal"
+        strokeWidth="2"
+        fill="none"
+      />
+      {[0, 1, 2].map((i) => (
+        <rect
+          key={i}
+          x={64 + i * 36}
+          y="170"
+          width="24"
+          height="22"
+          className="fill-bg stroke-muted"
+          strokeWidth="1.5"
+        />
+      ))}
+      <circle cx="248" cy="181" r="6" className="fill-signal flicker" />
+      <path d="M160 70V30M120 70V46M200 70V46" className="stroke-muted" strokeWidth="2" />
+      <circle cx="160" cy="26" r="5" className="fill-pumpkin" />
+    </svg>
+  );
+}
+
 function signalState(state: Sample["state"]) {
   return state === "steady" ? "text-fg" : "text-signal";
 }
@@ -110,6 +161,9 @@ export function HomePage() {
             <a href="#deploy" className={`text-sm text-muted hover:text-fg ${focus}`}>
               Deploy
             </a>
+            <a href="/dashboard" className={`text-sm text-signal hover:text-fg ${focus}`}>
+              Dashboard
+            </a>
           </nav>
           <a
             href="#walk"
@@ -121,31 +175,45 @@ export function HomePage() {
       </header>
 
       <main>
-        <section className="mx-auto max-w-6xl px-5 pt-16 pb-8 md:pt-24">
-          <p className="rise font-mono text-xs tracking-widest text-signal uppercase">
-            Registers in. Reasons out.
-          </p>
-          <h1 className="rise rise-2 mt-4 max-w-3xl text-4xl leading-tight font-medium tracking-tight md:text-6xl">
-            Silent machines. Speaking models.
-          </h1>
-          <p className="rise rise-3 mt-5 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-            Phantomlink turns registers, pulses, and forgotten protocols into a stream any
-            agent can reason over — without ripping out the plant.
-          </p>
-          <div className="rise rise-4 mt-8 flex flex-col gap-3 sm:flex-row">
-            <a
-              href="#translate"
-              className={`inline-flex h-11 items-center justify-center bg-signal px-5 text-sm font-medium text-bg transition-transform duration-150 ease-out active:scale-[0.96] ${focus}`}
-            >
-              See a device wake up
-            </a>
-            <a
-              href="#bridge"
-              className={`inline-flex h-11 items-center justify-center border border-line px-5 text-sm text-fg transition-colors duration-200 hover:border-muted active:scale-[0.96] ${focus}`}
-            >
-              Read the protocol
-            </a>
-          </div>
+        <section className="relative isolate overflow-hidden">
+          <FogLayer />
+          <FloatingGhosts />
+          <Flashlight
+            hidden={hauntText}
+            className="mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-16 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:items-center md:pt-24"
+          >
+            <div className="relative">
+              <p className="rise font-mono text-xs tracking-widest text-signal uppercase">
+                <span className="flicker">●</span> Registers in. Reasons out.
+              </p>
+              <h1 className="rise rise-2 glitch mt-4 max-w-3xl text-5xl leading-[0.98] font-semibold tracking-tight md:text-7xl">
+                Silent machines.
+                <br />
+                <span className="text-signal">Speaking</span> models.
+              </h1>
+              <p className="rise rise-3 mt-6 max-w-xl text-base leading-relaxed text-muted md:text-lg">
+                Phantomlink reads Modbus, BACnet, OPC and 4-20 mA from the plant you already run. It
+                names each point and sends agents events they can act on. No PLC rewrite.
+              </p>
+              <div className="rise rise-4 mt-8 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="#translate"
+                  className={`inline-flex h-11 items-center justify-center bg-signal px-5 text-sm font-medium text-bg transition-transform duration-150 ease-out active:scale-[0.96] ${focus}`}
+                >
+                  Summon a device
+                </a>
+                <a
+                  href="/dashboard"
+                  className={`inline-flex h-11 items-center justify-center border border-line px-5 text-sm text-fg transition-colors duration-200 hover:border-signal active:scale-[0.96] ${focus}`}
+                >
+                  Open the dashboard
+                </a>
+              </div>
+            </div>
+            <div className="rise rise-3 relative" id="device-slot">
+              <DeviceFallback />
+            </div>
+          </Flashlight>
         </section>
 
         <Translator />
@@ -192,8 +260,8 @@ export function HomePage() {
               What it already speaks.
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-              Not a rip-and-replace. The buses that are still running the building, the line,
-              and the boiler house.
+              Not a rip-and-replace. The buses that are still running the building, the line, and
+              the boiler house.
             </p>
             <ul className="mt-10 border-t border-line">
               {protocols.map(([name, note]) => (
@@ -214,8 +282,7 @@ export function HomePage() {
         <section id="deploy" className="scroll-mt-20 border-t border-line">
           <div className="mx-auto max-w-6xl px-5 py-20 md:py-28">
             <h2 className="max-w-2xl text-2xl leading-tight font-medium tracking-tight md:text-4xl">
-              We don't replace the PLC. The phantom stays on your network. Only the meaning
-              leaves.
+              We don't replace the PLC. The phantom stays on your network. Only the meaning leaves.
             </h2>
             <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-2 font-mono text-sm text-signal">
               <li>On-prem</li>
@@ -228,7 +295,10 @@ export function HomePage() {
         <section className="border-t border-line" aria-labelledby="plant-title">
           <div className="mx-auto max-w-6xl px-5 py-20 md:py-28">
             <p className="font-mono text-xs tracking-widest text-muted uppercase">One plant</p>
-            <h2 id="plant-title" className="mt-4 max-w-2xl text-2xl font-medium tracking-tight md:text-3xl">
+            <h2
+              id="plant-title"
+              className="mt-4 max-w-2xl text-2xl font-medium tracking-tight md:text-3xl"
+            >
               A boiler house the last vendor told them to replace.
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
@@ -288,7 +358,10 @@ function Translator() {
       <div className="mt-3 grid border border-line bg-surface md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
         <div className="min-w-0 p-5">
           <p className="font-mono text-xs tracking-widest text-muted uppercase">Register</p>
-          <pre key={`${sample.id}-raw`} className="rise mt-4 font-mono text-sm leading-relaxed text-fg">
+          <pre
+            key={`${sample.id}-raw`}
+            className="rise mt-4 font-mono text-sm leading-relaxed text-fg"
+          >
             {sample.lines.join("\n")}
           </pre>
           <p className="mt-4 font-mono text-xs text-muted">{sample.caption}</p>
@@ -351,9 +424,9 @@ function Ask() {
           }`}
         >
           <p className="max-w-2xl pt-6 text-base leading-relaxed text-fg">
-            boiler-3 discharge pressure falls 0.6 bar in the first nine minutes of second shift.
-            The drop lines up with ahu-1 supply air opening, not with fuel rate. The register was
-            always there. The historian never named the coincidence.
+            boiler-3 discharge pressure falls 0.6 bar in the first nine minutes of second shift. The
+            drop lines up with ahu-1 supply air opening, not with fuel rate. The register was always
+            there. The historian never named the coincidence.
           </p>
         </div>
       </div>
@@ -385,8 +458,8 @@ function Walk() {
             Bring us one device nobody can query.
           </h2>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
-            A register, a loop, a serial port. One is enough to start the walk. The request stays
-            in this browser.
+            A register, a loop, a serial port. One is enough to start the walk. The request stays in
+            this browser.
           </p>
         </div>
         {sent ? (
