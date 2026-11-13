@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SimulationBanner } from "@/components/simulation-banner";
-import { Phantom } from "@/components/mascots";
+import { Phantom } from "@/components/phantom";
+import type { PhantomExpression } from "@/components/phantom";
 import { TinyGhost } from "@/components/ghost-effects";
 import { devices } from "@/lib/mock-telemetry";
 import {
@@ -78,6 +79,22 @@ export function ResurrectDemo() {
     setDeviceId(id);
     reset();
   }
+
+  const [celebrate, setCelebrate] = useState(false);
+  const awakened = started && !rejected && done;
+  useEffect(() => {
+    setCelebrate(false);
+    if (!awakened) return;
+    const t = window.setTimeout(() => setCelebrate(true), 2600);
+    return () => window.clearTimeout(t);
+  }, [awakened]);
+  const expression = demoExpression({
+    stepId: started ? DEMO_STEPS[Math.min(step, DEMO_STEPS.length - 1)].id : null,
+    rejected,
+    provError,
+    awakened,
+    celebrate,
+  });
 
   const visible = DEMO_STEPS.slice(0, step + 1);
 
@@ -159,12 +176,14 @@ export function ResurrectDemo() {
       </section>
 
       <section aria-labelledby="run-title" aria-live="polite" className="grid grid-cols-[minmax(0,1fr)] gap-3">
-        <h2 id="run-title" className="text-lg font-medium">
-          2. Watch what PhantomLink does
-        </h2>
+        <div className="flex items-center gap-3">
+          <Phantom expression={expression} size={72} className="shrink-0" />
+          <h2 id="run-title" className="text-lg font-medium">
+            2. Watch what PhantomLink does
+          </h2>
+        </div>
         {!started ? (
           <div className="flex items-center gap-4 border border-dashed border-line p-6">
-            <Phantom className="ghost-float size-12 shrink-0 opacity-80" />
             <p className="text-sm text-muted">
               Nothing has been resurrected yet. Press Resurrect device. Every step below is scripted and
               labelled simulated. No hardware is read.
@@ -213,6 +232,24 @@ export function ResurrectDemo() {
       </section>
     </div>
   );
+}
+
+/**
+ * Maps real demo state to a pose. The text panels stay the primary message;
+ * the mascot only echoes them. Nothing here fires on events that do not exist.
+ */
+function demoExpression(s: {
+  stepId: string | null;
+  rejected: boolean;
+  provError: boolean;
+  awakened: boolean;
+  celebrate: boolean;
+}): PhantomExpression {
+  if (s.stepId === null) return "default";
+  if (s.provError) return "warning";
+  if (s.awakened) return s.celebrate ? "celebrating" : "resurrection";
+  if (s.stepId === "crc") return s.rejected ? "warning" : "excited";
+  return "working";
 }
 
 function technicalFor(id: string) {
