@@ -14,7 +14,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Phantomlink reads legacy industrial registers (Modbus, BACnet, OPC, 4-20 mA) and turns them into named events for AI agents. No PLC rewrite.",
+          "PhantomLink bridges legacy industrial protocols with modern applications and AI agents. It reconstructs and validates device communication, decodes verified telemetry, and preserves cryptographic evidence. Demonstration build with simulated data.",
       },
       { name: "theme-color", content: "#0a0813" },
     ],

@@ -21,51 +21,42 @@ export type TelemetryEvent = {
 
 export type SeriesPoint = { i: number; v: number };
 
-export type AgentTool = { name: string; blurb: string; calls: number };
+export type AgentTool = { name: string; blurb: string };
 
 export type Telemetry = {
   seq: number;
   events: TelemetryEvent[];
+  /** Series of the first device. Kept for callers that do not select a device. */
   series: SeriesPoint[];
+  /** One synthetic series per device id. */
+  seriesByDevice: Record<string, SeriesPoint[]>;
   tools: AgentTool[];
+};
+
+/** Synthetic chart point per device. Values are generated, not measured. */
+export type SeriesSpec = {
+  point: string;
+  unit: string;
+  base: number;
+  /** Half-width of the clamp and chart domain. */
+  range: number;
 };
 
 export const BASELINE = 6.4;
 
 export const devices: Device[] = [
-  {
-    id: "gw-01",
-    name: "Gateway 01",
-    bus: "Modbus RTU",
-    asset: "boiler-3",
-    points: 62,
-    status: "online",
-  },
-  {
-    id: "gw-02",
-    name: "Gateway 02",
-    bus: "4-20 mA",
-    asset: "line-2",
-    points: 38,
-    status: "online",
-  },
-  {
-    id: "gw-03",
-    name: "Gateway 03",
-    bus: "BACnet",
-    asset: "ahu-1",
-    points: 27,
-    status: "degraded",
-  },
-  {
-    id: "gw-04",
-    name: "Gateway 04",
-    bus: "OPC classic",
-    asset: "press-7",
-    points: 13,
-    status: "offline",
-  },
+  { id: "sim-a", name: "Simulated device A", bus: "Modbus RTU", asset: "boiler-3", points: 62, status: "online" },
+  { id: "sim-b", name: "Simulated device B", bus: "Modbus RTU", asset: "line-2", points: 38, status: "online" },
+  { id: "sim-c", name: "Simulated device C", bus: "Modbus RTU", asset: "ahu-1", points: 27, status: "degraded" },
+  { id: "sim-d", name: "Simulated device D", bus: "Modbus RTU", asset: "press-7", points: 13, status: "offline" },
 ];
+
+export const seriesSpecs: Record<string, SeriesSpec> = {
+  "sim-a": { point: "discharge pressure", unit: "bar", base: 6.4, range: 1.2 },
+  "sim-b": { point: "room temperature", unit: "°C", base: 4.1, range: 1.2 },
+  "sim-c": { point: "supply air", unit: "°F", base: 71.4, range: 4 },
+  "sim-d": { point: "stroke count rate", unit: "/min", base: 18, range: 3 },
+};
 
 const registers = [
   { asset: "boiler-3", point: "discharge pressure", unit: "bar", base: 6.4, spread: 0.7 },
@@ -106,25 +97,32 @@ function makeEvent(rand: () => number, id: number, ts: number): TelemetryEvent {
 export function initialTelemetry(): Telemetry {
   const rand = mulberry32(31);
   const events = Array.from({ length: 12 }, (_, i) => makeEvent(rand, 12 - i, BASE_TS - i * 4000));
-  const series = Array.from({ length: 40 }, (_, i) => ({
-    i,
-    v: Number(
-      (
-        BASELINE +
-        Math.sin(i / 4) * 0.25 +
-        (rand() - 0.5) * 0.3 -
-        (i > 30 ? (i - 30) * 0.06 : 0)
-      ).toFixed(2),
-    ),
-  }));
+  const seriesByDevice: Record<string, SeriesPoint[]> = {};
+  for (const device of devices) {
+    const spec = seriesSpecs[device.id];
+    const scale = spec.range / 1.2;
+    seriesByDevice[device.id] = Array.from({ length: 40 }, (_, i) => ({
+      i,
+      v: Number(
+        (
+          spec.base +
+          (Math.sin(i / 4) * 0.25 +
+            (rand() - 0.5) * 0.3 -
+            (i > 30 && device.id === "sim-a" ? (i - 30) * 0.06 : 0)) *
+            scale
+        ).toFixed(2),
+      ),
+    }));
+  }
   return {
     seq: 12,
     events,
-    series,
+    series: seriesByDevice[devices[0].id],
+    seriesByDevice,
     tools: [
-      { name: "read_asset", blurb: "Read a named point with units and state", calls: 1284 },
-      { name: "explain_drift", blurb: "Correlate a drift with nearby assets", calls: 316 },
-      { name: "subscribe_alarm", blurb: "Stream state changes to an agent", calls: 92 },
+      { name: "read_asset", blurb: "Planned: read a named point with units and state" },
+      { name: "explain_drift", blurb: "Planned: correlate a drift with nearby assets" },
+      { name: "subscribe_alarm", blurb: "Planned: stream state changes to an agent" },
     ],
   };
 }
@@ -133,21 +131,28 @@ export function initialTelemetry(): Telemetry {
 export function tickTelemetry(prev: Telemetry, rand: () => number = Math.random): Telemetry {
   const seq = prev.seq + 1;
   const event = makeEvent(rand, seq, prev.events[0].ts + 1800);
-  const last = prev.series[prev.series.length - 1];
-  const next = Number(
-    Math.min(
-      BASELINE + 1.2,
-      Math.max(BASELINE - 1.2, last.v + (BASELINE - last.v) * 0.12 + (rand() - 0.5) * 0.35),
-    ).toFixed(2),
-  );
-  const tools = prev.tools.map((tool) =>
-    rand() < 0.35 ? { ...tool, calls: tool.calls + 1 } : tool,
-  );
+  const seriesByDevice: Record<string, SeriesPoint[]> = {};
+  for (const device of devices) {
+    const spec = seriesSpecs[device.id];
+    const series = prev.seriesByDevice[device.id];
+    const last = series[series.length - 1];
+    const next = Number(
+      Math.min(
+        spec.base + spec.range,
+        Math.max(
+          spec.base - spec.range,
+          last.v + (spec.base - last.v) * 0.12 + (rand() - 0.5) * 0.35 * (spec.range / 1.2),
+        ),
+      ).toFixed(2),
+    );
+    seriesByDevice[device.id] = [...series.slice(1), { i: last.i + 1, v: next }];
+  }
   return {
     seq,
     events: [event, ...prev.events].slice(0, 12),
-    series: [...prev.series.slice(1), { i: last.i + 1, v: next }],
-    tools,
+    series: seriesByDevice[devices[0].id],
+    seriesByDevice,
+    tools: prev.tools,
   };
 }
 
@@ -170,34 +175,23 @@ export function eventsPerMin(events: TelemetryEvent[]) {
 
 export type PartName = "RS-485" | "4-20mA" | "Ethernet" | "Antenna";
 
-/** Part copy for the selected device. The 3D model is a generic gateway. */
+/** Part copy for the selected device. The 3D model is a generic illustrative gateway. */
 export function partDetails(device: Device, part: PartName): { title: string; detail: string } {
+  const sim = `${device.name} is simulated. ${device.points} synthetic points.`;
   switch (part) {
     case "RS-485":
-      return {
-        title: "RS-485 bus",
-        detail:
-          device.bus === "Modbus RTU"
-            ? `Modbus RTU, 9600 8E1, slave 01. ${device.points} points mapped.`
-            : `Not in use on ${device.name}. It reads ${device.bus} instead.`,
-      };
+      return { title: "RS-485 port", detail: `Serial side of a generic gateway. ${sim}` };
     case "4-20mA":
-      return {
-        title: "4-20 mA loops",
-        detail:
-          device.bus === "4-20 mA"
-            ? `Four analog inputs, 12-bit, span-scaled. ${device.points} points mapped.`
-            : `Not in use on ${device.name}. It reads ${device.bus} instead.`,
-      };
+      return { title: "Analog inputs", detail: `Illustrative analog terminals. ${sim}` };
     case "Ethernet":
       return {
         title: "Ethernet uplink",
         detail:
           device.status === "offline"
-            ? `${device.name} is offline. No events are leaving the plant.`
-            : "Outbound events only. No inbound ports open.",
+            ? `${device.name} is shown offline in this simulation.`
+            : "Illustrative uplink. No network traffic is generated by this view.",
       };
     case "Antenna":
-      return { title: "Antenna", detail: "Optional LTE fallback when the plant network is down." };
+      return { title: "Antenna", detail: "Illustrative antenna. Not tied to a real device." };
   }
 }

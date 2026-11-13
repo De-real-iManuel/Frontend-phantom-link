@@ -10,7 +10,7 @@ export function FogLayer({ className = "" }: { className?: string }) {
   );
 }
 
-function TinyGhost({ className = "" }: { className?: string }) {
+export function TinyGhost({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
       <path d="M4 22V11a8 8 0 0 1 16 0v11l-2.67-2.67L14.67 22 12 19.33 9.33 22 6.67 19.33z" />
