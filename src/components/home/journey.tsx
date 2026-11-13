@@ -71,9 +71,18 @@ export function Journey() {
         <h2 id="journey-title" className="mt-4 max-w-2xl text-2xl font-medium tracking-tight md:text-3xl">
           From a silent register to an answer an agent can trust.
         </h2>
-        <p className="mt-3 font-mono text-xs leading-relaxed text-muted">
-          Legacy device → Protocol reconstruction → Frame validation → Device-aware decoding → Provenance
-          record → MCP → AI agent
+        <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs leading-relaxed text-muted">
+          {stages.map((s, i) => (
+            <span key={s.name} className="inline-flex items-center gap-2">
+              {s.name}
+              {i < stages.length - 1 ? (
+                <svg viewBox="0 0 16 8" className="w-4 text-signal" fill="none" aria-hidden="true">
+                  <path d="M0 4h14M11 1l3 3-3 3" stroke="currentColor" strokeWidth="1.2" />
+                </svg>
+              ) : null}
+            </span>
+          ))}
+          <span className="sr-only">Legacy device → Protocol reconstruction → Frame validation → Device-aware decoding → Provenance record → MCP → AI agent</span>
         </p>
 
         <div role="tablist" aria-label="Product journey" className="mt-8 grid gap-2 sm:grid-cols-2 lg:grid-cols-7">

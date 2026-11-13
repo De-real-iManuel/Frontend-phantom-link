@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SiteHeader } from "@/components/site-header";
+import { SimulationBanner } from "@/components/simulation-banner";
 import { Equipment3D } from "@/components/device-view";
 import { SCENES } from "@/components/three/equipment-parts";
 import {
@@ -168,6 +169,7 @@ export function DevicesPage() {
       <SiteHeader />
 
       <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6">
+        <SimulationBanner />
         <div>
           <h1 className="text-2xl font-medium">Devices</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted">

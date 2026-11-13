@@ -8,7 +8,7 @@ export function DemoPage() {
       <SiteHeader />
       <main className="relative isolate overflow-hidden">
         <FogLayer className="opacity-50" />
-        <div className="relative mx-auto grid max-w-4xl gap-8 px-4 py-8 md:py-12">
+        <div className="relative mx-auto grid max-w-4xl grid-cols-[minmax(0,1fr)] gap-8 px-4 py-8 md:py-12">
           <div>
             <p className="font-mono text-xs tracking-widest text-signal uppercase">The Haunted Industrial Network</p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">Resurrect a legacy device</h1>

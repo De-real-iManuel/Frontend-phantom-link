@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Mark } from "@/components/mark";
 import { Device3D } from "@/components/device-view";
 import { FogLayer, FloatingGhosts, Flashlight } from "@/components/ghost-effects";
-import { SimBadge } from "@/components/simulation-banner";
+import { SimBadge, SimulationBanner } from "@/components/simulation-banner";
 
 export const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
 
@@ -48,9 +48,7 @@ export function Hero() {
               Open the dashboard
             </Link>
           </div>
-          <p className="rise rise-4 mt-4 font-mono text-xs text-muted">
-            Demonstration build. All device data on this site is synthetic.
-          </p>
+          <SimulationBanner className="rise rise-4 mt-5 max-w-xl" />
         </div>
         <div className="rise rise-3 relative" id="device-slot">
           <Device3D />

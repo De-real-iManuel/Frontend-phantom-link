@@ -32,7 +32,7 @@ export function StepShell({
 }) {
   return (
     <li
-      className={`rise border bg-surface p-4 md:p-5 ${tone === "warn" ? "border-pumpkin" : "border-line"}`}
+      className={`rise min-w-0 border bg-surface p-4 md:p-5 ${tone === "warn" ? "border-pumpkin" : "border-line"}`}
       aria-labelledby={`step-${index}`}
     >
       <div className="flex flex-wrap items-center gap-3">

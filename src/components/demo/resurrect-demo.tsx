@@ -80,7 +80,7 @@ export function ResurrectDemo() {
   const visible = DEMO_STEPS.slice(0, step + 1);
 
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <SimulationBanner />
 
       <section aria-labelledby="pick-title" className="grid gap-3">
@@ -156,7 +156,7 @@ export function ResurrectDemo() {
         </div>
       </section>
 
-      <section aria-labelledby="run-title" aria-live="polite" className="grid gap-3">
+      <section aria-labelledby="run-title" aria-live="polite" className="grid grid-cols-[minmax(0,1fr)] gap-3">
         <h2 id="run-title" className="text-lg font-medium">
           2. Watch what PhantomLink does
         </h2>
@@ -169,7 +169,7 @@ export function ResurrectDemo() {
             </p>
           </div>
         ) : (
-          <ol className="grid gap-3">
+          <ol className="grid grid-cols-[minmax(0,1fr)] gap-3">
             {visible.map((st, i) => (
               <StepShell
                 key={st.id}
