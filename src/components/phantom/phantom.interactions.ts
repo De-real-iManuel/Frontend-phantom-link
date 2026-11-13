@@ -35,6 +35,7 @@ interface PointerOptions {
   followPointer: boolean;
   interactive: boolean;
   onTap: () => void;
+  onActivity?: () => void;
 }
 
 /**
@@ -42,9 +43,11 @@ interface PointerOptions {
  * (no React state per move). Never listens on window or document.
  */
 export function usePhantomPointer(ref: RefObject<HTMLElement | null>, opts: PointerOptions) {
-  const { followPointer, interactive, onTap } = opts;
+  const { followPointer, interactive, onTap, onActivity } = opts;
   const tapRef = useRef(onTap);
   tapRef.current = onTap;
+  const activityRef = useRef(onActivity);
+  activityRef.current = onActivity;
 
   useEffect(() => {
     const el = ref.current;
@@ -84,7 +87,19 @@ export function usePhantomPointer(ref: RefObject<HTMLElement | null>, opts: Poin
       }
     };
 
+    // Hover or movement counts as activity (throttled) so idle sleep does not
+    // trigger under the cursor.
+    let lastActivity = 0;
+    const onPresence = () => {
+      const now = Date.now();
+      if (now - lastActivity < 1000) return;
+      lastActivity = now;
+      activityRef.current?.();
+    };
+
     const passive = { passive: true } as const;
+    el.addEventListener("pointerenter", onPresence, passive);
+    el.addEventListener("pointermove", onPresence, passive);
     if (track) {
       el.addEventListener("pointerenter", onMove, passive);
       el.addEventListener("pointermove", onMove, passive);
@@ -98,6 +113,8 @@ export function usePhantomPointer(ref: RefObject<HTMLElement | null>, opts: Poin
     }
     return () => {
       if (raf) cancelAnimationFrame(raf);
+      el.removeEventListener("pointerenter", onPresence);
+      el.removeEventListener("pointermove", onPresence);
       el.removeEventListener("pointerenter", onMove);
       el.removeEventListener("pointermove", onMove);
       el.removeEventListener("pointerleave", reset);

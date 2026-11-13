@@ -80,6 +80,13 @@ Future (no such events exist yet, nothing is faked): real device discovery start
 
 The poses are flattened images, not layered art. There is no eye tracking, and no independent animation of the lower extension or face. Tilt, parallax, glow, pulse, particles and crossfades are applied to the whole pose. See ASSET-CLEANUP.md for the cleanup limits.
 
+## Known trade-offs
+
+- **Idle sleep**: hover and pointer movement over the mascot count as activity (throttled to once per second), as do taps, so it only sleeps after real inactivity.
+- **Hero hit area**: the hero mascot is interactive and sits over the lower-left corner of the device slot, so a drag that starts exactly on the mascot goes to the mascot, not `Device3D`. This is intentional so the mascot stays tappable; the rest of the device remains draggable. Set `interactive={false}` on that instance if this becomes a problem.
+- **Icons and manifest**: `AGENTS.md` requires the injected PWA manifest and `/__grok` apple icon to stay, so the page has two `apple-touch-icon` links. The 192/512, maskable and `public/phantom/manifest.json` assets are produced but not linked. Pointing the injected manifest at them is a follow-up.
+- **Tests**: `npm test` runs the Phantom tests first so the baseline og failures in the later stage cannot hide them.
+
 ## QA
 
 `node scripts/phantom-assets/qa.mjs` starts a dev server (port `QA_PORT`, default 8097), runs 52 checks (all eight expressions, desktop tilt and reset, touch tap and scroll, reduced motion, favicon, console errors, 375 px overflow), and writes screenshots to `docs/phantom/qa/`.

@@ -112,7 +112,8 @@ export const Phantom = memo(function Phantom({
     onInteractionRef.current?.("tap");
   }, []);
 
-  usePhantomPointer(rootRef, { followPointer, interactive, onTap });
+  const onActivity = useCallback(() => setActivity((n) => n + 1), []);
+  usePhantomPointer(rootRef, { followPointer, interactive, onTap, onActivity });
 
   const cfg = PHANTOM_CONFIG[shown];
   const alt = label ?? cfg.alt;
