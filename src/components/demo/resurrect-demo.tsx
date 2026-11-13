@@ -64,7 +64,9 @@ export function ResurrectDemo() {
   }, [playing, step, done]);
 
   useEffect(() => {
-    if (started) endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (!started) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    endRef.current?.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
   }, [step, started]);
 
   function reset() {

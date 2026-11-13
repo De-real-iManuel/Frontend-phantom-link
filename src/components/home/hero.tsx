@@ -1,3 +1,4 @@
+import { hauntText } from "./haunt-text";
 import { Link } from "@tanstack/react-router";
 import { Mark } from "@/components/mark";
 import { Device3D } from "@/components/device-view";
@@ -6,8 +7,6 @@ import { SimBadge, SimulationBanner } from "@/components/simulation-banner";
 
 export const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal";
 
-const hauntText =
-  "slave01 fn03 reg0000 qty0001  01 03 00 00 00 01 84 0A  01 03 02 02 80 B8 44  crc ok  slave01 fn03 reg0000 qty0001  01 03 00 00 00 01 84 0A  01 03 02 02 80 B8 44  crc ok  slave01 fn03 reg0000 qty0001  01 03 00 00 00 01 84 0A  01 03 02 02 80 B8 44  crc ok  slave01 fn03 reg0000 qty0001  01 03 00 00 00 01 84 0A  01 03 02 02 80 B8 44  crc ok";
 
 export function Hero() {
   return (
@@ -33,6 +32,9 @@ export function Hero() {
             PhantomLink bridges legacy industrial protocols with modern applications and AI agents. It
             reconstructs and validates device communication, decodes verified telemetry, and preserves
             cryptographic evidence of how each reading was produced.
+          </p>
+          <p className="rise rise-3 mt-3 max-w-xl font-mono text-xs leading-relaxed text-muted">
+            This frontend runs in simulation mode. Backend pipeline integration is pending.
           </p>
           <div className="rise rise-4 mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
