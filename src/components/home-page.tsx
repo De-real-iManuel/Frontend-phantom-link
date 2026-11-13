@@ -115,6 +115,9 @@ export function HomePage() {
             <a href="#deploy" className={`text-sm text-muted hover:text-fg ${focus}`}>
               Deploy
             </a>
+            <Link to="/devices" className={`text-sm text-muted hover:text-fg ${focus}`}>
+              Devices
+            </Link>
             <Link to="/dashboard" className={`text-sm text-signal hover:text-fg ${focus}`}>
               Dashboard
             </Link>

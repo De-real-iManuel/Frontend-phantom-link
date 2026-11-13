@@ -141,6 +141,12 @@ export function DashboardPage() {
           <p className="inline-flex h-11 items-center gap-2 border border-pumpkin px-3 font-mono text-xs text-pumpkin">
             Simulated data
           </p>
+          <Link
+            to="/devices"
+            className={`inline-flex h-11 items-center border border-line px-3 font-mono text-xs transition-colors duration-200 hover:border-signal ${focus}`}
+          >
+            Devices
+          </Link>
           <button
             type="button"
             aria-pressed={!paused}
