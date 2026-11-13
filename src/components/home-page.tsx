@@ -138,7 +138,7 @@ export function HomePage() {
           >
             <div className="relative">
               <p className="rise font-mono text-xs tracking-widest text-signal uppercase">
-                <span className="flicker">●</span> Registers in. Reasons out.
+                <span aria-hidden="true" className="flicker mr-1 inline-block size-2 rounded-full bg-signal align-middle" />{" "}Registers in. Reasons out.
               </p>
               <h1 className="rise rise-2 glitch mt-4 max-w-3xl text-5xl leading-[0.98] font-semibold tracking-tight md:text-7xl">
                 Silent machines.
@@ -418,7 +418,7 @@ function Walk() {
         </div>
         {sent ? (
           <div className="border border-line bg-surface p-6">
-            <Mark className="size-10" />
+            <Mark className="size-10" animated />
             <p className="mt-5 text-lg text-fg">Noted. Nothing left this browser.</p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
               A walk starts with one device. Bring the frame when you're ready.

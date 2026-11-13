@@ -10,10 +10,11 @@ import {
   YAxis,
 } from "recharts";
 import { Wordmark } from "@/components/mark";
+import { SimulationBanner } from "@/components/simulation-banner";
 import { FogLayer } from "@/components/ghost-effects";
 import { Device3D, type DevicePart } from "@/components/device-view";
 import {
-  BASELINE,
+  seriesSpecs,
   devices,
   formatClock,
   eventsPerMin,
@@ -102,13 +103,15 @@ export function DashboardPage() {
   const device = devices.find((d) => d.id === selectedDevice) ?? devices[0];
   const online = devices.filter((d) => d.status !== "offline").reduce((n, d) => n + d.points, 0);
   const total = devices.reduce((n, d) => n + d.points, 0);
-  const agentCalls = data.tools.reduce((n, t) => n + t.calls, 0);
+  const spec = seriesSpecs[device.id];
+  const base = spec.base;
+  const series = data.seriesByDevice[device.id];
 
   const kpis = [
     ["Points online", `${online}/${total}`],
     ["Events per min (window)", String(eventsPerMin(data.events))],
     ["Drifts in window", String(openDrifts(data.events))],
-    ["Agent calls", agentCalls.toLocaleString("en-US")],
+    ["Planned agent tools", String(data.tools.length)],
   ];
 
   return (
@@ -153,6 +156,7 @@ export function DashboardPage() {
         </header>
 
         <main className="relative grid grid-cols-[minmax(0,1fr)] gap-4 p-4 md:p-6">
+          <SimulationBanner />
           <h1 className="sr-only">Phantomlink dashboard, simulated data</h1>
 
           <section
@@ -170,32 +174,32 @@ export function DashboardPage() {
 
           <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <Panel
-              title="Reference: boiler-3 discharge pressure (bar)"
-              right={<span className="font-mono text-xs text-muted">baseline {BASELINE}</span>}
+              title={`${device.asset} ${spec.point} (${spec.unit}), synthetic`}
+              right={<span className="font-mono text-xs text-muted">baseline {base}</span>}
             >
               <div
                 className="h-64 p-2"
                 role="img"
-                aria-label="Line chart of discharge pressure with a drift band around the baseline"
+                aria-label="Line chart of synthetic readings with a drift band around the baseline"
               >
                 {mounted ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                      data={data.series}
+                      data={series}
                       margin={{ top: 8, right: 12, bottom: 0, left: -12 }}
                     >
                       <CartesianGrid stroke="#2a2442" strokeDasharray="2 4" vertical={false} />
                       <XAxis dataKey="i" hide />
                       <YAxis
-                        domain={[BASELINE - 1.4, BASELINE + 1.4]}
-                        ticks={[5, 5.7, 6.4, 7.1, 7.8]}
+                        domain={[base - spec.range - 0.2, base + spec.range + 0.2]}
+                        allowDecimals
                         tickFormatter={(value: number) => value.toFixed(1)}
                         tick={{ fill: "#a29cba", fontSize: 11, fontFamily: "IBM Plex Mono" }}
                         stroke="#2a2442"
                       />
                       <ReferenceArea
-                        y1={BASELINE - band}
-                        y2={BASELINE + band}
+                        y1={base - band}
+                        y2={base + band}
                         fill="#7dffa1"
                         fillOpacity={0.08}
                         stroke="#7dffa1"
@@ -347,9 +351,6 @@ export function DashboardPage() {
                       <span className="min-w-0">
                         <span className="block font-mono text-sm">{tool.name}</span>
                         <span className="block text-xs text-muted">{tool.blurb}</span>
-                      </span>
-                      <span className="font-mono text-sm text-signal tabular-nums">
-                        {tool.calls.toLocaleString("en-US")}
                       </span>
                     </li>
                   ))}
